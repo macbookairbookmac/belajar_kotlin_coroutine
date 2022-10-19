@@ -46,8 +46,9 @@ fun main() = runBlocking {
 
 // === Builder - builder yang dapat digunakan untuk menentukan thread yang dibutuhkan ===
 
-// Single Thread Context
+// 1. Single Thread Context
 // Setiap saat coroutine akan dijalankan pada thread yang anda tentukan
+/*
 @DelicateCoroutinesApi
 fun main() = runBlocking<Unit>{
     val dispatcher = newSingleThreadContext("myThread")
@@ -55,5 +56,20 @@ fun main() = runBlocking<Unit>{
         println("Starting in ${Thread.currentThread().name}")
         delay(1000L)
         println("Resuming in ${Thread.currentThread().name}")
+    }.start()
+}
+*/
+
+// 2.  Thread Pool
+// Sebuah dispatcher yang memiliki kumpulan thread.
+// Ia akan memulai dan melanjutkan coroutine disalah satu thread yang tersedia pada kumpulan tersebut.
+// Runtime akan menentukan thread mana yang tersedia dan juga menentukan bagaimanan proses distribusi bebannya.
+@DelicateCoroutinesApi
+fun main() = runBlocking<Unit> {
+    val dispatcher = newFixedThreadPoolContext(3, "myPool") // 3 thread pool
+    launch(dispatcher){
+        println("Starting in ${Thread.currentThread().name}")
+        delay(1000L)
+        println("resuming in ${Thread.currentThread().name}")
     }.start()
 }
